@@ -1,0 +1,65 @@
+{
+	"manifest_version": 2,
+	"type": "parserhook",
+	
+	"name": "TranslateLua",
+	"author": "[https://theelm.net TheElm]",
+	"descriptionmsg": "translate-lua-ext-description",
+	
+	"url": "https://theelm.net/MW-TranslateLua",
+	"version": "1.0.0",
+	"license-name": "MIT",
+	
+	"requires": {
+		"MediaWiki": ">= 1.39.4",
+		"platform": {
+			"php": ">= 8.1"
+		},
+		"extensions": {
+			"Translate": "*"
+		}
+	},
+	
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
+	"Hooks": {
+		"ScribuntoExternalLibraries": "scribunto"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\TranslateLua\\Hooks\\Hooks",
+			"services": [
+				"MainConfig",
+				"ExtTranslateTweaks"
+			]
+		},
+		"categories": {
+			"class": "MediaWiki\\Extension\\TranslateLua\\Hooks\\CategoryHooks",
+			"services": [
+				"LinkRenderer",
+				"ExtTranslateTweaks"
+			]
+		},
+		"site-notice": {
+			"class": "MediaWiki\\Extension\\TranslateLua\\Hooks\\SiteNoticeHooks",
+			"services": [
+				"MainConfig",
+				"ParserFactory",
+				"MainWANObjectCache",
+				"ExtTranslateTweaks"
+			]
+		},
+		"scribunto": {
+			"class": "MediaWiki\\Extension\\TranslateLua\\Hooks\\ScribuntoHooks"
+		}
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\TranslateLua\\": "includes/"
+	},
+	"MessagesDirs": {
+		"TranslateLua": [
+			"i18n"
+		]
+	}
+}
