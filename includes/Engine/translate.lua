@@ -52,20 +52,22 @@ function translate.getBundle(title)
         error('Invalid value "' .. type(title) .. '" for title', 2)
     end
 
-    return {
-        ['getKeys'] = (function( self )
-            return php.getBundleKeys( serialized )
-        end),
-        ['get'] = (function( self, key, code )
-            return php.getBundleValue( serialized, key, code )
-        end),
-        ['getAll'] = (function( self, code )
-            return php.getBundleValues( serialized, code )
-        end),
-        ['getMetadata'] = (function( self )
-            return php.getBundleMetadata( serialized )
-        end)
-    }
+    local tbl = {}
+
+    function tbl:getKeys()
+        return php.getBundleKeys( serialized )
+    end
+    function tbl:get( key, code )
+        return php.getBundleValue( serialized, key, code )
+    end
+    function tbl:getAll( code )
+        return php.getBundleValues( serialized, code )
+    end
+    function tbl:getMetadata()
+        return php.getBundleMetadata( serialized )
+    end
+
+    return tbl
 end
 
 function translate.getCurrentLanguage()
