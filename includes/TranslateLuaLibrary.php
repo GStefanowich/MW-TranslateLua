@@ -60,9 +60,6 @@ class TranslateLuaLibrary extends Scribunto_LuaLibraryBase {
         if ( array_key_exists( $key, $this -> bundleStore ) ) {
             $cache = $this -> bundleStore[ $key ];
         } else {
-            // Prevent too many lookups
-            $this -> incrementExpensiveFunctionCount();
-
             $services = MediaWikiServices::getInstance();
             $config = $services -> getMainConfig();
 
