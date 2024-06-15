@@ -7,6 +7,7 @@ use MediaWiki\Extension\Translate\MessageBundleTranslation\MalformedBundle;
 use MediaWiki\Extension\Translate\MessageBundleTranslation\MessageBundle;
 use MediaWiki\Extension\Translate\MessageBundleTranslation\MessageBundleContent;
 use MediaWiki\Extension\Translate\MessageBundleTranslation\MessageBundleMetadata;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
@@ -71,6 +72,11 @@ class LuaMessageBundle {
             if ( array_key_exists( $languageCode, $this -> languages ) ) {
                 $lazy = $this -> languages[ $languageCode ];
             } else {
+                $languageNames = MediaWikiServices::getInstance() -> getLanguageNameUtils();
+                if ( !$languageNames -> isValidBuiltInCode( $languageCode ) ) {
+                    throw new LuaError('Invalid language code: ' . $languageCode);
+                }
+
                 $lazy = $this -> getMessagesLazily( $languageCode );
                 $this -> languages[ $languageCode ] = $lazy;
             }
