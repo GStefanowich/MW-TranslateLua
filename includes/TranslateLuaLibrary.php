@@ -54,9 +54,14 @@ class TranslateLuaLibrary extends Scribunto_LuaLibraryBase {
 
     private array $bundleStore = [];
 
+    /**
+     * Get information about a MessageBundle
+     * @param Title $title
+     * @return LuaMessageBundle
+     * @throws LuaError If the title given by the user is an invalid syntax, or there is an issue with the MessageBundle
+     */
     private function getMessageBundle( Title $title ): LuaMessageBundle {
         $key = $title -> getFullText();
-        $cache = null;
 
         if ( array_key_exists( $key, $this -> bundleStore ) ) {
             $cache = $this -> bundleStore[ $key ];
@@ -95,9 +100,10 @@ class TranslateLuaLibrary extends Scribunto_LuaLibraryBase {
     }
 
     /**
+     * Get all of the keys that are set for the MessageBundle requested by the script
      * @param mixed $title
      * @return array
-     * @throws LuaError
+     * @throws LuaError If the title given by the user is an invalid syntax
      */
     public function getBundleKeys( mixed $title ): array {
         $parsed = $this-> parseUserInputTitle( $title );
@@ -109,11 +115,12 @@ class TranslateLuaLibrary extends Scribunto_LuaLibraryBase {
     }
 
     /**
+     * Get a singular value from a MessageBundle using a given key
      * @param mixed $title
      * @param mixed $key
      * @param mixed $languageCode
      * @return string[]
-     * @throws LuaError
+     * @throws LuaError If the title given by the user is an invalid syntax, or the languageCode is invalid
      */
     public function getBundleValue( mixed $title, mixed $key, mixed $languageCode ): array {
         $this -> checkType( 'key', 2, $key, 'string' );
@@ -129,7 +136,7 @@ class TranslateLuaLibrary extends Scribunto_LuaLibraryBase {
      * @param mixed $title
      * @param mixed $languageCode
      * @return array
-     * @throws LuaError If the title given by the user is an invalid syntax
+     * @throws LuaError If the title given by the user is an invalid syntax, or the languageCode is invalid
      */
     public function getBundleValues( mixed $title, mixed $languageCode ): array {
         $this -> checkTypeOptional( 'code', 2, $languageCode, 'string', null );
@@ -165,7 +172,11 @@ class TranslateLuaLibrary extends Scribunto_LuaLibraryBase {
     }
 
     /**
-     * @return string[]
+     * Get the language code of the current page that the Module is running in
+     *   Will return 'null'/'nil' if the page is not marked for translation, or if the page is a source page
+     *   A language code will be returns *only* on the translated subpages, including '/en'
+     *   This can be used for generating links and operates on the same premise as the {{#translation:}} Parser Function
+     * @return string[] A singleton array with the language code, or null
      */
     public function getCurrentLanguage(): array {
         $title = $this -> getTitle();
@@ -176,7 +187,7 @@ class TranslateLuaLibrary extends Scribunto_LuaLibraryBase {
     }
 
     /**
-     * Get an array of languageCodes for a given page, where the languageCodes are variants available for the page
+     * Get an array of language codes for a given page, where the languageCodes are variants available for the page
      * @param mixed $title
      * @return array
      * @throws LuaError
@@ -203,11 +214,13 @@ class TranslateLuaLibrary extends Scribunto_LuaLibraryBase {
     }
 
     /**
-     * @param $title
+     * Get an array of language codes and the associated percentage completion that those translated pages are
+     *   The source page ('en' or <code>$wgLanguageCode</code>) will be 1.00
+     * @param mixed $title A title provided by the user
      * @return array
      * @throws LuaError
      */
-    public function getLanguageProgress( $title ): array {
+    public function getLanguageProgress( mixed $title ): array {
         $parsed = $this-> parseUserInputTitle( $title );
         $page = TranslateHelper::getPage( $parsed );
         $out = [];
