@@ -61,7 +61,7 @@ function translate.getBundle(title)
         end),
         ['getAll'] = (function( self, code )
             return php.getBundleValues( serialized, code )
-        end)
+        end),
         ['getMetadata'] = (function( self )
             return php.getBundleMetadata( serialized )
         end)
